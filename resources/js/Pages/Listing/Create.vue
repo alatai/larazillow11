@@ -1,0 +1,120 @@
+<template>
+  <!-- 在HTML中，表单的默认行为是将表单提交到当前URL -->
+  <!-- 当添加JavaScript来处理事件时，需要盗用event.prevent阻止默认行为 -->
+  <!-- @ 是vue的属性 -->
+  <form @submit.prevent="create">
+    <div>
+      <div>
+        <label>Beds</label>
+        <input v-model.number="form.beds" type="text" />
+        <div v-if="form.errors.beds">
+          {{ form.errors.beds }}
+        </div>
+      </div>
+
+      <div>
+        <label>Baths</label>
+        <input v-model.number="form.baths" type="text" />
+        <div v-if="form.errors.baths">
+          {{ form.errors.baths }}
+        </div>
+      </div>
+
+      <div>
+        <label>Area</label>
+        <input v-model.number="form.area" type="text" />
+        <div v-if="form.errors.area">
+          {{ form.errors.area }}
+        </div>
+      </div>
+
+      <div>
+        <label>City</label>
+        <input v-model="form.city" type="text" />
+        <div v-if="form.errors.city">
+          {{ form.errors.city }}
+        </div>
+      </div>
+
+      <div>
+        <label>Post Code</label>
+        <input v-model="form.code" type="text" />
+        <div v-if="form.errors.code">
+          {{ form.errors.code }}
+        </div>
+      </div>
+
+      <div>
+        <label>Street</label>
+        <input v-model="form.street" type="text" />
+        <div v-if="form.errors.street">
+          {{ form.errors.street }}
+        </div>
+      </div>
+
+      <div>
+        <label>Street Nr</label>
+        <input v-model.number="form.street_nr" type="text" />
+        <div v-if="form.errors.street_nr">
+          {{ form.errors.street_nr }}
+        </div>
+      </div>
+
+      <div>
+        <label>Price</label>
+        <input v-model.number="form.price" type="text" />
+        <div v-if="form.errors.price">
+          {{ form.errors.price }}
+        </div>
+      </div>
+
+      <div>
+        <button type="submit">Create</button>
+      </div>
+    </div>
+  </form>
+</template>
+
+<script setup>
+// 返回一个对象的响应式代理
+// import { reactive } from 'vue'
+// 使用useForm代替reactive
+// 还可以访问通过表单发送的所有字段的验证错误
+import { useForm } from '@inertiajs/vue3'
+
+// 调用reactive，将向它传递一个对象
+// ref和reactive之间的区别在于ref主要用于单个值
+// 而reactive用于对象
+// const form = reactive({
+
+const form = useForm({
+  beds: 0,
+  baths: 0,
+  area: 0,
+  city: null,
+  street: null,
+  code: null,
+  street_nr: null,
+  price: 0,
+})
+
+// 响应式的值，意味着读取或设置时，可能会导致UI更新或其他一些依赖于它们的值变化
+// 但是一旦为这个reactive属性设置了一个新的变量，从表单变量中读取
+// 这个 x 就不再是响应式了，这意味着，在原始对象周围有一个代理对象包装
+// 一旦把它设置为不同变量，就会失去响应式
+// const x = form.beds
+
+const create = () => form.post(route('listing.store'))
+</script>
+
+<!-- 可以为每个组件定制样式 -->
+<!-- scoped属性，它实际上是一个vue属性，可以为通用的HTML元素定义样式 -->
+<style scoped>
+label {
+  margin-right: 2em;
+}
+
+div {
+  padding: 2px;
+}
+</style>

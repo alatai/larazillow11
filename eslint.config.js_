@@ -1,0 +1,48 @@
+import vue from 'eslint-plugin-vue'
+
+export default [
+  {
+    files: ['**/*.js', '**/*.vue'],
+    languageOptions: {
+      ecmaVersion: 2020,
+      sourceType: 'module',
+      globals: {
+        // 定义全局变量，等同于传统的 `env`
+        window: 'readonly',
+        document: 'readonly',
+        console: 'readonly',
+        require: 'readonly',
+        module: 'readonly',
+        amd: true, // 表示 AMD 环境
+        browser: true, // 表示浏览器环境
+        es6: true, // 表示 ES6 环境
+      },
+    },
+    plugins: {
+      vue,
+    },
+    rules: {
+      'indent': ['error', 2],
+      'quotes': ['warn', 'single'],
+      'semi': ['warn', 'never'],
+      'no-unused-vars': ['error', { vars: 'all', args: 'after-used', ignoreRestSiblings: true }],
+      'comma-dangle': ['warn', 'always-multiline'],
+      'vue/multi-word-component-names': 'off',
+      'vue/max-attributes-per-line': 'off',
+      'vue/no-v-html': 'off',
+      'vue/require-default-prop': 'off',
+      'vue/singleline-html-element-content-newline': 'off',
+      'vue/html-self-closing': [
+        'warn',
+        {
+          html: {
+            void: 'always',
+            normal: 'always',
+            component: 'always',
+          },
+        },
+      ],
+      'vue/no-v-text-v-html-on-component': 'off',
+    },
+  },
+]
