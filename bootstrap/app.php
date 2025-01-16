@@ -16,6 +16,9 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->web(append: [
             HandleInertiaRequests::class,
         ]);
+
+        // 自定义登录验证重定向
+        // $middleware->redirectGuestsTo('/listing/1');
     })
     ->withExceptions(function (Exceptions $exceptions) {
         //

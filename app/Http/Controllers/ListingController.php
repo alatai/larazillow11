@@ -7,6 +7,13 @@ use Illuminate\Http\Request;
 
 class ListingController extends Controller
 {
+
+    // 还可以再构造器中定义中间件
+    // public function __construct()
+    // {
+    //     $this->middleware('auth')->except(['index', 'show']);
+    // }
+
     /**
      * Display a listing of the resource.
      */
