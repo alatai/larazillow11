@@ -4,9 +4,16 @@ namespace App\Http\Controllers;
 
 use App\Models\Listing;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class ListingController extends Controller
 {
+    // 因为是资料类型的控制器
+    // 所以可以通过添加构造器实现policy
+    public function __construct()
+    {
+        $this->authorizeResource(Listing::class, 'listing');
+    }
 
     // 还可以再构造器中定义中间件
     // public function __construct()
@@ -32,6 +39,11 @@ class ListingController extends Controller
      */
     public function create()
     {
+        // 如果没有指定模型，则意味着实际上没有调用任何policy
+        // if (Auth::user()->cannot('create', Listing::class)) {
+        // abort(403);
+        // }
+
         return inertia('Listing/Create');
     }
 
@@ -47,8 +59,13 @@ class ListingController extends Controller
         // $listing->beds = $request->beds;
         // ...
         // $listing->save();
+        // Listing::create(
 
-        Listing::create(
+        // 获取当前登录用户信息
+        // 方法一：
+        // Auth::user();
+        // 方法二：
+        $request->user()->listings()->create(
             // ... 允许将两个数组合并到一起
             // 如果第二个数组有与第一个数组相同的键，那么原始值将被替换
             //...$request->all(),
@@ -78,17 +95,26 @@ class ListingController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
-
-    // 还可以使用路由绑定的方式
-    // Laravel将通过路由参数中给定的ID获取Model
-    // public function show(Listing $listing)
+    public function show(Listing $listing)
     {
+        // 可以使用auth获取当前用户
+        // 然后用户使用can方法，需要再这里指定操作名称（policy中的方法名）
+        // 返回true或者false
+        // Auth::user()->can('view', $listing);
+
+        // 如果想禁止用户看到内容，可以使用cannot，然后执行if语句 
+        // if (Auth::user()->cannot('view', $listing)) {
+        // abort(403); // HTTP状态码，用于禁止操作
+        // }
+
+        // 还可以使用路由绑定的方式
+        // Laravel将通过路由参数中给定的ID获取Model
+        // public function show(Listing $listing)
         return inertia(
             'Listing/Show',
             [
-                'listing' => Listing::find($id)
-                // 'listing' => $listing
+                // 'listing' => Listing::find($id)
+                'listing' => $listing
             ]
         );
     }

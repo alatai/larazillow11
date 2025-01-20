@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Listing extends Model
 {
@@ -23,4 +24,20 @@ class Listing extends Model
         'street_nr',
         'price'
     ];
+
+    /**
+     * 描述数据之间的关系
+     * BelongsTo: 返回特定类的对象
+     * 
+     */
+    public function owner(): BelongsTo
+    {
+        // 需要调用特定方法，接受两个参数
+        // 参数一：相关联的模型
+        // 参数二：自定义外键名称
+        return $this->belongsTo(
+            \App\Models\User::class,
+            'by_user_id'
+          );
+    }
 }
