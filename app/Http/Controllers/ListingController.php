@@ -24,12 +24,27 @@ class ListingController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
+        $filters = $request->only([
+            'priceFrom',
+            'priceTo',
+            'beds',
+            'baths',
+            'areaFrom',
+            'areaTo'
+        ]);
+
         return inertia(
             'Listing/Index',
             [
-                'listings' => Listing::all()
+                'filters' => $filters,
+                'listings' => Listing::mostRecent()
+                    ->filter($filters)
+                    // 对于结果进行分页，调用paginate方法，并指定每页显示数
+                    // paginate返回对象，包含数据、页面信息
+                    ->paginate(10)
+                    ->withQueryString()
             ]
         );
     }
