@@ -6,12 +6,14 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Listing extends Model
 {
     // 模型类需要使用HasFactory
     // 之后Laravel可以理解并发现特定模型的工厂
-    use HasFactory;
+    // SoftDeletes：使用软删除
+    use HasFactory, SoftDeletes;
 
     // 如果想使用Model的create静态方法
     // create方法修改的每一列都需要在Model的 fillable 属性中列出
@@ -24,6 +26,12 @@ class Listing extends Model
         'street',
         'street_nr',
         'price'
+    ];
+ 
+    // （这并不是一个laravel内置方法）
+    protected $sortable = [
+        'price',
+        'created_at'
     ];
 
     /**
@@ -75,6 +83,15 @@ class Listing extends Model
         )->when(
             $filters['areaTo'] ?? false,
             fn($query, $value) => $query->where('area', '<=', $value)
+        )->when(
+            $filters['deleted'] ?? false,
+            fn($query, $value) => $query->withTrashed()
+        )->when(
+            $filters['by'] ?? false,
+            fn($query, $value) =>
+            !in_array($value, $this->sortable)
+                ? $query :
+                $query->orderBy($value, $filters['order'] ?? 'desc')
         );
     }
 }

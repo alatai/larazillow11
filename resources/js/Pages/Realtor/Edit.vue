@@ -109,7 +109,7 @@ const form = useForm({
 // const x = form.beds
 
 const update = () =>
-  form.put(route('listing.update', { listing: props.listing.id }))
+  form.put(route('realtor.listing.update', { listing: props.listing.id }))
 </script>
 
 <!-- 可以为每个组件定制样式 -->

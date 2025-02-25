@@ -104,7 +104,7 @@ const form = useForm({
 // 一旦把它设置为不同变量，就会失去响应式
 // const x = form.beds
 
-const create = () => form.post(route('listing.store'))
+const create = () => form.post(route('realtor.listing.store'))
 </script>
 
 <!-- 可以为每个组件定制样式 -->

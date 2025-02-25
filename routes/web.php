@@ -4,6 +4,7 @@ use App\Http\Controllers\AuthController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\IndexController;
 use App\Http\Controllers\ListingController;
+use App\Http\Controllers\RealtorListingController;
 use App\Http\Controllers\UserAccountController;
 
 // Laravel 路由
@@ -26,14 +27,11 @@ Route::get('/hello',  [IndexController::class, 'show'])
 // 这个resource方法调用将返回一个对象，该对象调用另一个方法(only)
 // 该方法接受数组参数，指定需要的Controller方法
 Route::resource('listing', ListingController::class)
-  ->only(['create', 'store', 'edit', 'update', 'destroy'])
-  // 如果将中间件添加到整个资源路由中，它将应用于listing控制器中的所有路由
-  ->middleware('auth');
+  ->only(['index', 'show']);
+// 如果将中间件添加到整个资源路由中，它将应用于listing控制器中的所有路由
+// ->middleware('auth');
 // ->only(['index', 'show', 'create', 'store']);
 // ->except(['destroy']);
-
-Route::resource('listing', ListingController::class)
-  ->except(['create', 'store', 'edit', 'update', 'destroy']);
 
 // 无法使用resource方法来配置这些路径
 // 因为该方法会为资源控制器创建资源路由
@@ -50,3 +48,22 @@ Route::delete('logout', [AuthController::class, 'destroy'])
 
 Route::resource('user-account', UserAccountController::class)
   ->only(['create', 'store']);
+
+Route::prefix('realtor')
+  ->name('realtor.')
+  ->middleware('auth')
+  // 只有在这个函数中，才能定义根
+  // 在这里定义的所有规则都适用于这个组中定义的所有路由
+  ->group(function () {
+    // 确保额外的路由定义在资源路由之上（顺序很重要）
+    Route::put(
+      'listing/{listing}/restore',
+      [RealtorListingController::class, 'restore']
+    )
+      // 把 name('listing.restore') 放在 put() 之后， Laravel 才能正确解析？？
+      ->name('listing.restore')
+      ->withTrashed();
+    Route::resource('listing', RealtorListingController::class)
+      ->only(['index', 'destroy', 'edit', 'update', 'create', 'store'])
+      ->withTrashed();
+  });
